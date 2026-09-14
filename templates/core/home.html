@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if banners %}
+<div id="heroCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        {% for banner in banners %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ banner.image.url }}" class="d-block w-100" alt="{{ banner.title }}">
+            {% if banner.title %}
+            <div class="carousel-caption d-none d-md-block">
+                <h2>{{ banner.title }}</h2>
+                <p>{{ banner.subtitle }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+{% endif %}
+
+<section class="mb-5">
+    <h2 class="mb-4">Our Work</h2>
+    <div class="row g-4">
+        {% for project in featured_projects %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                <img src="{{ project.cover_image.url }}" class="card-img-top" alt="{{ project.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ project.title }}</h5>
+                    <p class="card-text">{{ project.description|truncatewords:20 }}</p>
+                    <a href="{% url 'portfolio:detail' project.slug %}" class="btn btn-outline-primary">View project</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>No featured projects yet.</p>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-3">
+        <a href="{% url 'portfolio:list' %}" class="btn btn-link">See all projects</a>
+    </div>
+</section>
+
+<section id="about" class="mb-5">
+    <h2 class="mb-4">About Us</h2>
+    <div class="row align-items-center">
+        {% if site_settings.logo %}
+        <div class="col-md-3">
+            <img src="{{ site_settings.logo.url }}" class="img-fluid" alt="{{ site_settings.company_name }}">
+        </div>
+        {% endif %}
+        <div class="col-md-9">
+            {{ site_settings.about_text|safe }}
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="mb-5">
+    <h2 class="mb-4">Contact Us</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                {% csrf_token %}
+                {{ contact_form|crispy }}
+                <button type="submit" class="btn btn-primary">Send message</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
