@@ -40,10 +40,10 @@ INSTALLED_APPS = [
     # local apps
     "accounts",
     "core",
-    "blog",
+    # "blog",
     "portfolio",
-    "timesheets",
-    "dashboard",
+    # "timesheets",
+    # "dashboard",
 ]
 
 MIDDLEWARE = [
