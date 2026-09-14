@@ -24,12 +24,12 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("summernote/", include("django_summernote.urls")),
 
-    # path("", include("core.urls")),
-    # path("blog/", include("blog.urls")),
-    # path("portfolio/", include("portfolio.urls")),
-    # path("timesheets/", include("timesheets.urls")),
-    # path("dashboard/", include("dashboard.urls")),
-    # path("account/", include("accounts.urls")),
+    path("", include("core.urls")),
+    path("blog/", include("blog.urls")),
+    path("portfolio/", include("portfolio.urls")),
+    path("timesheets/", include("timesheets.urls")),
+    path("dashboard/", include("dashboard.urls")),
+    path("account/", include("accounts.urls")),
 ]
 
 if settings.DEBUG:
