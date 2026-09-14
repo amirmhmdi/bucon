@@ -1,0 +1,24 @@
+<footer class="bg-dark text-light py-4 mt-5">
+    <div class="container d-flex flex-column flex-md-row justify-content-between">
+        <div>
+            <h5>{{ site_settings.company_name }}</h5>
+            <p class="mb-1">{{ site_settings.address }}</p>
+            <p class="mb-1">{{ site_settings.phone }}</p>
+            <p class="mb-1">{{ site_settings.email }}</p>
+            {% if site_settings.working_hours %}
+                <p class="mb-1">{{ site_settings.working_hours }}</p>
+            {% endif %}
+        </div>
+        <div>
+            {% if site_settings.facebook_url %}
+                <a class="text-light me-3" href="{{ site_settings.facebook_url }}">Facebook</a>
+            {% endif %}
+            {% if site_settings.instagram_url %}
+                <a class="text-light" href="{{ site_settings.instagram_url }}">Instagram</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="text-center mt-3">
+        <small>&copy; {% now "Y" %} {{ site_settings.company_name }}. All rights reserved.</small>
+    </div>
+</footer>
