@@ -23,6 +23,20 @@ class ManagerRequiredMixin(LoginRequiredMixin):
             return HttpResponseForbidden("Manager access only.")
         return super().dispatch(request, *args, **kwargs)
 
+class ManagerDashboardView(ManagerRequiredMixin, TemplateView):
+    template_name = "dashboard/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            unread_messages=ContactMessage.objects.filter(is_read=False).count(),
+            pending_timesheets=TimesheetEntry.objects.filter(
+                status=TimesheetEntry.Status.PENDING
+            ).count(),
+            labor_count=Profile.objects.filter(role=Profile.Role.LABOR).count(),
+        )
+        return context
+
 
 class PendingTimesheetListView(ManagerRequiredMixin, ListView):
     model = TimesheetEntry
