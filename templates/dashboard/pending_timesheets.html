@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-4">Pending Timesheets</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Labor</th>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Total hours</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ entry.labor.get_full_name|default:entry.labor.email }}</td>
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.start_time }}</td>
+            <td>{{ entry.end_time }}</td>
+            <td>{{ entry.total_hours }}</td>
+            <td>{{ entry.description|truncatewords:10 }}</td>
+            <td>
+                <form method="post" action="{% url 'dashboard:approve_entry' entry.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                </form>
+                <a href="{% url 'dashboard:reject_entry' entry.pk %}" class="btn btn-sm btn-danger">Reject</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No entries awaiting approval.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

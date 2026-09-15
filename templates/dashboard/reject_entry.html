@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-4">Reject Entry</h1>
+<p>{{ entry.labor }} — {{ entry.date }} ({{ entry.start_time }}–{{ entry.end_time }})</p>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label" for="rejection_reason">Rejection reason</label>
+        <textarea class="form-control" id="rejection_reason" name="rejection_reason" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-danger">Reject entry</button>
+    <a href="{% url 'dashboard:pending_timesheets' %}" class="btn btn-link">Cancel</a>
+</form>
+{% endblock %}

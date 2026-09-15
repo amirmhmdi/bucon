@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "blog",
     "portfolio",
     "timesheets",
-    # "dashboard",
+    "dashboard",
 ]
 
 MIDDLEWARE = [
