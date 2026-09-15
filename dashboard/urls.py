@@ -14,4 +14,10 @@ urlpatterns = [
     # Contact messages
     path("messages/", views.ContactMessageListView.as_view(), name="contact_messages"),
     path("messages/<int:pk>/read/", views.mark_message_read, name="mark_message_read"),
+
+    # Labor accounts
+    path("labor/", views.LaborListView.as_view(), name="labor_list"),
+    path("labor/new/", views.LaborCreateView.as_view(), name="labor_create"),
+    path("labor/<int:pk>/edit/", views.LaborUpdateView.as_view(), name="labor_update"),
+    path("labor/<int:pk>/reset-password/", views.reset_labor_password, name="reset_password"),
 ]

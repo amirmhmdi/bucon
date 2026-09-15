@@ -66,3 +66,51 @@ def mark_message_read(request, pk):
     message.is_read = True
     message.save(update_fields=["is_read"])
     return redirect("dashboard:contact_messages")
+
+#labor account managment
+class LaborListView(ManagerRequiredMixin, ListView):
+    model = Profile
+    template_name = "dashboard/labor_list.html"
+    context_object_name = "labors"
+
+    def get_queryset(self):
+        return Profile.objects.filter(role=Profile.Role.LABOR).select_related("user")
+
+
+class LaborCreateView(ManagerRequiredMixin, FormView):
+    form_class = LaborCreateForm
+    template_name = "dashboard/labor_form.html"
+    success_url = reverse_lazy("dashboard:labor_list")
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, "Labor account created.")
+        return super().form_valid(form)
+
+
+class LaborUpdateView(ManagerRequiredMixin, UpdateView):
+    model = Profile
+    form_class = LaborUpdateForm
+    template_name = "dashboard/labor_form.html"
+    success_url = reverse_lazy("dashboard:labor_list")
+
+    def get_queryset(self):
+        return Profile.objects.filter(role=Profile.Role.LABOR)
+
+
+def reset_labor_password(request, pk):
+    if not request.user.profile.is_manager:
+        return HttpResponseForbidden()
+    profile = get_object_or_404(Profile, pk=pk, role=Profile.Role.LABOR)
+    if request.method == "POST":
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            profile.user.set_password(form.cleaned_data["temporary_password"])
+            profile.user.save()
+            profile.must_change_password = True
+            profile.save(update_fields=["must_change_password"])
+            messages.success(request, f"Password reset for {profile.user}.")
+            return redirect("dashboard:labor_list")
+    else:
+        form = ResetPasswordForm()
+    return render(request, "dashboard/reset_password.html", {"form": form, "profile": profile})

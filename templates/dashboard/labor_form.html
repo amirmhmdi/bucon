@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1 class="mb-4">{% if object %}Edit{% else %}New{% endif %} Labor Account</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{% url 'dashboard:labor_list' %}" class="btn btn-link">Cancel</a>
+</form>
+{% endblock %}
