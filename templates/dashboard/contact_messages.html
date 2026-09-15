@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-4">Contact Messages</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Message</th>
+            <th>Received</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for msg in contact_messages %}
+        <tr class="{% if not msg.is_read %}table-warning{% endif %}">
+            <td>{{ msg.name }}</td>
+            <td>{{ msg.email }}</td>
+            <td>{{ msg.phone }}</td>
+            <td>{{ msg.message|truncatewords:15 }}</td>
+            <td>{{ msg.created_at|date:"M j, Y H:i" }}</td>
+            <td>
+                {% if not msg.is_read %}
+                <form method="post" action="{% url 'dashboard:mark_message_read' msg.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Mark as read</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No messages yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

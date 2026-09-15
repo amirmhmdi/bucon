@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseForbidden
+from django.http import  HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.generic import ListView
 
+from core.models import ContactMessage
 from timesheets.models import TimesheetEntry
 
 
@@ -50,3 +51,18 @@ def reject_entry(request, pk):
         return redirect("dashboard:pending_timesheets")
     return render(request, "dashboard/reject_entry.html", {"entry": entry})
 
+
+#contact
+class ContactMessageListView(ManagerRequiredMixin, ListView):
+    model = ContactMessage
+    template_name = "dashboard/contact_messages.html"
+    context_object_name = "contact_messages"
+
+
+def mark_message_read(request, pk):
+    if not request.user.profile.is_manager:
+        return HttpResponseForbidden()
+    message = get_object_or_404(ContactMessage, pk=pk)
+    message.is_read = True
+    message.save(update_fields=["is_read"])
+    return redirect("dashboard:contact_messages")
