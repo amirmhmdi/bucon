@@ -43,3 +43,8 @@ class LaborUpdateForm(forms.ModelForm):
 
 class ResetPasswordForm(forms.Form):
     temporary_password = forms.CharField(widget=forms.PasswordInput)
+
+
+class PayrollFilterForm(forms.Form):
+    start_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
+    end_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))

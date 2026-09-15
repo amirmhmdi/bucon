@@ -19,7 +19,7 @@
     <div class="col-md-6">
         <a class="dashboard-tile" href="{% url 'dashboard:pending_timesheets' %}">
             <div>
-                <h2 class="h4">New timesheets (<span class="dashboard-tile-count">{{ pending_timesheets }}</span>)</h2>
+                <h2 class="h4">New timesheets ({{ pending_timesheets }})</h2>
                 <p class="text-muted mb-0">Approve or reject entries waiting for review.</p>
             </div>
         </a>
