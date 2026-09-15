@@ -1,13 +1,21 @@
+import csv
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import  HttpResponseForbidden
+from django.contrib.auth.models import User
+from django.db.models import Sum
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView, UpdateView
+from django.views.generic.edit import FormView
 
+from accounts.models import Profile
 from core.models import ContactMessage
 from timesheets.models import TimesheetEntry
 
+from .forms import LaborCreateForm, LaborUpdateForm, PayrollFilterForm, ResetPasswordForm
 
 class ManagerRequiredMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -114,3 +122,56 @@ def reset_labor_password(request, pk):
     else:
         form = ResetPasswordForm()
     return render(request, "dashboard/reset_password.html", {"form": form, "profile": profile})
+
+# payroll
+class PayrollReportView(ManagerRequiredMixin, FormView):
+    form_class = PayrollFilterForm
+    template_name = "dashboard/payroll_report.html"
+
+    def form_valid(self, form):
+        rows = self._build_rows(form.cleaned_data["start_date"], form.cleaned_data["end_date"])
+        return render(self.request, self.template_name, {"form": form, "rows": rows})
+
+    def _build_rows(self, start_date, end_date):
+        entries = (
+            TimesheetEntry.objects.filter(
+                status=TimesheetEntry.Status.APPROVED,
+                date__range=(start_date, end_date),
+            )
+            .values("labor__id", "labor__first_name", "labor__last_name", "labor__email")
+            .annotate(total_hours=Sum("total_hours"))
+        )
+        rows = []
+        for entry in entries:
+            profile = Profile.objects.get(user_id=entry["labor__id"])
+            hourly_rate = profile.hourly_rate or 0
+            total_hours = entry["total_hours"] or 0
+            rows.append(
+                {
+                    "name": f"{entry['labor__first_name']} {entry['labor__last_name']}".strip()
+                    or entry["labor__email"],
+                    "total_hours": total_hours,
+                    "hourly_rate": hourly_rate,
+                    "total_pay": total_hours * hourly_rate,
+                }
+            )
+        return rows
+
+
+def payroll_csv_export(request):
+    if not request.user.profile.is_manager:
+        return HttpResponseForbidden()
+
+    form = PayrollFilterForm(request.GET)
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "attachment; filename=payroll.csv"
+    writer = csv.writer(response)
+    writer.writerow(["Labor", "Total hours", "Hourly rate", "Total pay"])
+
+    if form.is_valid():
+        view = PayrollReportView()
+        rows = view._build_rows(form.cleaned_data["start_date"], form.cleaned_data["end_date"])
+        for row in rows:
+            writer.writerow([row["name"], row["total_hours"], row["hourly_rate"], row["total_pay"]])
+
+    return response

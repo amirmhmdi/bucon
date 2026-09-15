@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h1 class="mb-4">Payroll Report</h1>
+<form method="post" class="row g-3 align-items-end mb-4">
+    {% csrf_token %}
+    <div class="col-auto">{{ form.start_date|as_crispy_field }}</div>
+    <div class="col-auto">{{ form.end_date|as_crispy_field }}</div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Run report</button>
+    </div>
+</form>
+
+{% if rows %}
+<a href="{% url 'dashboard:payroll_csv' %}?start_date={{ form.start_date.value }}&end_date={{ form.end_date.value }}"
+   class="btn btn-outline-secondary mb-3">Export CSV</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Labor</th>
+            <th>Total hours</th>
+            <th>Hourly rate</th>
+            <th>Total pay</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.name }}</td>
+            <td>{{ row.total_hours }}</td>
+            <td>{{ row.hourly_rate }}</td>
+            <td>{{ row.total_pay }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

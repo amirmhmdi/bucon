@@ -20,4 +20,8 @@ urlpatterns = [
     path("labor/new/", views.LaborCreateView.as_view(), name="labor_create"),
     path("labor/<int:pk>/edit/", views.LaborUpdateView.as_view(), name="labor_update"),
     path("labor/<int:pk>/reset-password/", views.reset_labor_password, name="reset_password"),
+
+    # Payroll
+    path("payroll/", views.PayrollReportView.as_view(), name="payroll_report"),
+    path("payroll/export/", views.payroll_csv_export, name="payroll_csv"),
 ]
