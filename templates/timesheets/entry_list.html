@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>My Timesheet</h1>
+    <a href="{% url 'timesheets:create' %}" class="btn btn-primary">Add entry</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Break (min)</th>
+            <th>Total hours</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.start_time }}</td>
+            <td>{{ entry.end_time }}</td>
+            <td>{{ entry.break_minutes }}</td>
+            <td>{{ entry.total_hours }}</td>
+            <td>{{ entry.description|truncatewords:10 }}</td>
+            <td>
+                {% if entry.status == "approved" %}
+                    <span class="badge bg-success">Approved</span>
+                {% elif entry.status == "rejected" %}
+                    <span class="badge bg-danger" title="{{ entry.rejection_reason }}">Rejected</span>
+                {% else %}
+                    <span class="badge bg-secondary">Pending</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if entry.is_editable %}
+                    <a href="{% url 'timesheets:update' entry.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">No timesheet entries yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
