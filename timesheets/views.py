@@ -57,6 +57,16 @@ class TimesheetEntryUpdateView(LaborRequiredMixin, UpdateView):
             return HttpResponseForbidden("This entry has been approved and can no longer be edited.")
         return response
 
+    def post(self, request, *args, **kwargs):
+        if request.POST.get("action") == "delete":
+            entry = self.get_object()
+            if not entry.is_editable:
+                return HttpResponseForbidden("This entry has been approved and can no longer be deleted.")
+            entry.delete()
+            messages.success(request, "Timesheet entry deleted.")
+            return redirect(self.success_url)
+        return super().post(request, *args, **kwargs)
+
     def form_valid(self, form):
         if form.instance.status == TimesheetEntry.Status.REJECTED:
             form.instance.status = TimesheetEntry.Status.PENDING
