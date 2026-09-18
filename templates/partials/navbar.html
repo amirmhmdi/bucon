@@ -2,9 +2,12 @@
     <div class="container">
         <a class="navbar-brand" href="{% url 'core:home' %}">
             {% if site_settings.logo %}
+            <div>
                 <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.company_name }}" height="32">
+                <span class="fw-bold">{{ site_settings.company_name }}</span>
+            </div>
             {% else %}
-                {{ site_settings.company_name }}
+            <span class="fw-bold">{{ site_settings.company_name }}</span>
             {% endif %}
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
@@ -18,20 +21,20 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}#contact">Contact Us</a></li>
 
                 {% if user.is_authenticated %}
-                    {% if user.profile.is_labor %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'timesheets:list' %}">Timesheet</a></li>
-                    {% elif user.profile.is_manager %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:home' %}">Management</a></li>
-                    {% endif %}
+                {% if user.profile.is_labor %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'timesheets:list' %}">Timesheet</a></li>
+                {% elif user.profile.is_manager %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'dashboard:home' %}">Management</a></li>
+                {% endif %}
                 {% endif %}
             </ul>
 
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}">{{ user.get_full_name|default:user.email }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'account_logout' %}">Logout</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}">{{ user.get_full_name|default:user.email }}</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'account_logout' %}">Logout</a></li>
                 {% else %}
-                    <li class="nav-item"><a class="btn btn-primary" href="{% url 'account_login' %}">Login</a></li>
+                <li class="nav-item"><a class="btn btn-primary" href="{% url 'account_login' %}">Login</a></li>
                 {% endif %}
             </ul>
         </div>
