@@ -35,6 +35,6 @@ def post_login_redirect(request):
         return redirect("accounts:force_password_change")
 
     if profile.is_manager:
-        return redirect("dashboard:pending_timesheets")
+        return redirect("dashboard:home")
 
     return redirect("timesheets:list")
