@@ -14,6 +14,7 @@ class Post(models.Model):
     content = models.TextField()
     featured_image = models.ImageField(upload_to="blog/", blank=True, null=True)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.DRAFT)
+    is_featured = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

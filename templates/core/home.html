@@ -64,6 +64,32 @@
     </div>
 </section>
 
+{% if featured_posts.exists %}
+<section id="post" class="mb-5">
+    <h2 class="mb-4">Blog</h2>
+    <div class="row g-4">
+        {% for post in featured_posts %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                {% if post.featured_image %}
+                <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.excerpt }}</p>
+                    <a href="{% url 'blog:detail' post.slug %}" class="btn btn-outline-primary">Read more</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-3">
+        <a href="{% url 'blog:list' %}" class="btn btn-link">See all blog posts</a>
+    </div>
+</section>
+{% endif %}
+
+
 <section id="contact" class="mb-5">
     <h2 class="mb-4">Contact Us</h2>
     <div class="row">

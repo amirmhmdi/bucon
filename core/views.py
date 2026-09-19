@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from portfolio.models import Project
+from blog.models import Post
 
 from .forms import ContactForm
 from .models import Banner
@@ -21,6 +22,7 @@ def home(request):
     context = {
         "banners": Banner.objects.filter(is_active=True),
         "featured_projects": Project.objects.filter(status=Project.Status.PUBLISHED, is_featured=True)[:6],
+        "featured_posts": Post.objects.filter(status=Post.Status.PUBLISHED, is_featured=True)[:6],
         "contact_form": form,
     }
     return render(request, "core/home.html", context)
