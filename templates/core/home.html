@@ -4,15 +4,17 @@
 {% block content %}
 
 {% if banners %}
-<div id="heroCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+<div id="heroCarousel" class="carousel slide bucon-hero mb-5" data-bs-ride="carousel">
     <div class="carousel-inner">
         {% for banner in banners %}
         <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <img src="{{ banner.image.url }}" class="d-block w-100" alt="{{ banner.title }}">
-            {% if banner.title %}
-            <div class="carousel-caption d-none d-md-block">
-                <h2>{{ banner.title }}</h2>
-                <p>{{ banner.subtitle }}</p>
+            <img src="{{ banner.image.url }}" class="d-block w-100 bucon-hero-image" alt="{{ banner.title }}">
+            {% if banner.title or banner.subtitle %}
+            <div class="carousel-caption bucon-hero-caption">
+                <div class="bucon-hero-copy">
+                    {% if banner.title %}<h2>{{ banner.title }}</h2>{% endif %}
+                    {% if banner.subtitle %}<p>{{ banner.subtitle }}</p>{% endif %}
+                </div>
             </div>
             {% endif %}
         </div>

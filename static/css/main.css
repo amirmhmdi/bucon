@@ -119,6 +119,62 @@ a:hover {
   object-fit: cover;
 }
 
+.bucon-hero {
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: var(--bucon-shadow);
+}
+
+.bucon-hero .carousel-item {
+  aspect-ratio: 16 / 6;
+  background: var(--bucon-walnut-dark);
+}
+
+.bucon-hero-image {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.bucon-hero .carousel-item::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(37, 35, 31, 0.78),
+    rgba(37, 35, 31, 0.18) 70%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.bucon-hero-caption {
+  z-index: 1;
+  right: auto;
+  bottom: 0;
+  left: 0;
+  width: min(58%, 640px);
+  padding: 2rem 3rem;
+  text-align: left;
+}
+
+.bucon-hero-copy {
+  padding: 1.25rem 1.5rem;
+  border-left: 4px solid var(--bucon-brass);
+  background: rgba(37, 35, 31, 0.78);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.bucon-hero-copy h2 {
+  margin-bottom: 0.45rem;
+  color: #fff;
+}
+
+.bucon-hero-copy p {
+  margin-bottom: 0;
+}
+
 .card-title {
   color: var(--bucon-walnut-dark);
 }
@@ -235,5 +291,27 @@ footer a:hover {
 
   h1 {
     font-size: 1.8rem;
+  }
+
+  .bucon-hero .carousel-item {
+    aspect-ratio: 4 / 3;
+  }
+
+  .bucon-hero-caption {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .bucon-hero-copy {
+    padding: 0.85rem 1rem;
+  }
+
+  .bucon-hero-copy h2 {
+    font-size: 1.35rem;
+  }
+
+  .bucon-hero-copy p {
+    font-size: 0.9rem;
+    line-height: 1.4;
   }
 }
