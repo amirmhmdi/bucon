@@ -101,6 +101,46 @@ a:hover {
   color: var(--bucon-walnut);
 }
 
+.pagination {
+  gap: 0.4rem;
+}
+
+.pagination .page-link {
+  min-width: 2.75rem;
+  border: 1px solid var(--bucon-line);
+  border-radius: 4px !important;
+  background: var(--bucon-surface);
+  color: var(--bucon-walnut);
+  font-weight: 700;
+  text-align: center;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.pagination .page-link:hover,
+.pagination .page-link:focus-visible {
+  border-color: var(--bucon-walnut);
+  background: var(--bucon-walnut);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.pagination .page-item.active .page-link {
+  border-color: var(--bucon-walnut);
+  background: var(--bucon-walnut);
+  color: #fff;
+}
+
+.pagination .page-item.disabled .page-link {
+  border-color: var(--bucon-line);
+  background: var(--bucon-sawdust);
+  color: var(--bucon-ink-soft);
+  opacity: 1;
+}
+
 .card,
 .auth-panel,
 .dashboard-tile {
@@ -291,6 +331,16 @@ footer a:hover {
 
   h1 {
     font-size: 1.8rem;
+  }
+
+  .pagination {
+    gap: 0.25rem;
+  }
+
+  .pagination .page-link {
+    min-width: 2.4rem;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.9rem;
   }
 
   .bucon-hero .carousel-item {
