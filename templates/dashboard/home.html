@@ -8,11 +8,11 @@
 </section>
 
 <section class="row g-4" aria-label="Manager actions">
-    <div class="col-md-6">
-        <a class="dashboard-tile" href="{% url 'dashboard:contact_messages' %}">
+    <div class="col-md-12">
+        <a class="dashboard-tile" href="{% url 'dashboard:all_timesheets' %}">
             <div>
-                <h2 class="h4">Contact messages ({{ unread_messages }})</h2>
-                <p class="text-muted mb-0">Read new enquiries from the public site.</p>
+                <h2 class="h4 text-start text-md-center">All timesheets ({{ all_timesheets_count }})</h2>
+                <p class="text-muted mb-0 mb-0 text-start text-md-center">Filter and review every labor timesheet.</p>
             </div>
         </a>
     </div>
@@ -21,6 +21,14 @@
             <div>
                 <h2 class="h4">New timesheets ({{ pending_timesheets }})</h2>
                 <p class="text-muted mb-0">Approve or reject entries waiting for review.</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6">
+        <a class="dashboard-tile" href="{% url 'dashboard:contact_messages' %}">
+            <div>
+                <h2 class="h4">Contact messages ({{ unread_messages }})</h2>
+                <p class="text-muted mb-0">Read new enquiries from the public site.</p>
             </div>
         </a>
     </div>

@@ -48,3 +48,27 @@ class ResetPasswordForm(forms.Form):
 class PayrollFilterForm(forms.Form):
     start_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
     end_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))
+
+
+class TimesheetFilterForm(forms.Form):
+    labor = forms.ModelChoiceField(
+        queryset=User.objects.filter(profile__role=Profile.Role.LABOR).order_by("first_name", "last_name", "email"),
+        required=False,
+        empty_label="All users",
+    )
+    start_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    end_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    sort = forms.ChoiceField(
+        choices=(
+            ("newest", "Newest dates first"),
+            ("oldest", "Oldest dates first"),
+        ),
+        required=False,
+        initial="newest",
+    )

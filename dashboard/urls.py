@@ -8,6 +8,7 @@ urlpatterns = [
     path("", views.ManagerDashboardView.as_view(), name="home"),
     # Timesheet approval
     path("timesheets/", views.PendingTimesheetListView.as_view(), name="pending_timesheets"),
+    path("timesheets/all/", views.AllTimesheetListView.as_view(), name="all_timesheets"),
     path("timesheets/<int:pk>/approve/", views.approve_entry, name="approve_entry"),
     path("timesheets/<int:pk>/reject/", views.reject_entry, name="reject_entry"),
 

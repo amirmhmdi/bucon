@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}All Timesheets | {{ site_settings.company_name }}{% endblock %}
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+    <div>
+        <p class="text-uppercase small fw-semibold text-muted mb-2">Manager workspace</p>
+        <h1 class="mb-0">All Timesheets</h1>
+    </div>
+    <a href="{% url 'dashboard:home' %}" class="btn btn-outline-primary">Back to dashboard</a>
+</div>
+
+<form method="get" class="card p-3 mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-3">{{ form.labor|as_crispy_field }}</div>
+        <div class="col-12 col-md-3">{{ form.start_date|as_crispy_field }}</div>
+        <div class="col-12 col-md-3">{{ form.end_date|as_crispy_field }}</div>
+        <div class="col-12 col-md-3">{{ form.sort|as_crispy_field }}</div>
+        <div class="col-12 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Apply filters</button>
+            <a href="{% url 'dashboard:all_timesheets' %}" class="btn btn-link">Clear filters</a>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Labor</th>
+                <th>Date</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Break (min)</th>
+                <th>Total hours</th>
+                <th>Rate</th>
+                <th>Daily wage</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.labor.get_full_name|default:entry.labor.email }}</td>
+                <td>{{ entry.date|date:"d M Y" }}</td>
+                <td>{{ entry.start_time|time:"H:i" }}</td>
+                <td>{{ entry.end_time|time:"H:i" }}</td>
+                <td>{{ entry.break_minutes }}</td>
+                <td>{{ entry.total_hours }}</td>
+                <td>{% if entry.labor.profile.hourly_rate %}{{ entry.labor.profile.hourly_rate|floatformat:2 }}{% else %}Not set{% endif %}</td>
+                <td>{% if entry.daily_wage %}{{ entry.daily_wage|floatformat:2 }}{% else %}Not set{% endif %}</td>
+                <td>{{ entry.description|striptags|truncatewords:12 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9">No timesheets match the selected filters.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Timesheet pages">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if pagination_query %}&{{ pagination_query }}{% endif %}">Previous</a></li>
+        {% endif %}
+        <li class="page-item active"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if pagination_query %}&{{ pagination_query }}{% endif %}">Next</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

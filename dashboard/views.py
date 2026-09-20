@@ -3,7 +3,7 @@ import csv
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.db.models import Sum
+from django.db.models import DecimalField, ExpressionWrapper, F, Sum
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -15,7 +15,13 @@ from accounts.models import Profile
 from core.models import ContactMessage
 from timesheets.models import TimesheetEntry
 
-from .forms import LaborCreateForm, LaborUpdateForm, PayrollFilterForm, ResetPasswordForm
+from .forms import (
+    LaborCreateForm,
+    LaborUpdateForm,
+    PayrollFilterForm,
+    ResetPasswordForm,
+    TimesheetFilterForm,
+)
 
 class ManagerRequiredMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -33,6 +39,7 @@ class ManagerDashboardView(ManagerRequiredMixin, TemplateView):
             pending_timesheets=TimesheetEntry.objects.filter(
                 status=TimesheetEntry.Status.PENDING
             ).count(),
+            all_timesheets_count=TimesheetEntry.objects.count(),
             labor_count=Profile.objects.filter(role=Profile.Role.LABOR).count(),
         )
         return context
@@ -45,6 +52,52 @@ class PendingTimesheetListView(ManagerRequiredMixin, ListView):
 
     def get_queryset(self):
         return TimesheetEntry.objects.filter(status=TimesheetEntry.Status.PENDING)
+
+
+class AllTimesheetListView(ManagerRequiredMixin, ListView):
+    model = TimesheetEntry
+    template_name = "dashboard/all_timesheets.html"
+    context_object_name = "entries"
+    paginate_by = 20
+
+    def get_form(self):
+        return TimesheetFilterForm(self.request.GET or None)
+
+    def get_queryset(self):
+        self.filter_form = self.get_form()
+        queryset = TimesheetEntry.objects.select_related("labor", "labor__profile")
+
+        if not self.filter_form.is_valid():
+            return queryset.annotate(
+                daily_wage=ExpressionWrapper(
+                    F("total_hours") * F("labor__profile__hourly_rate"),
+                    output_field=DecimalField(max_digits=12, decimal_places=2),
+                )
+            ).order_by("-date", "-created_at")
+
+        filters = self.filter_form.cleaned_data
+        if filters["labor"]:
+            queryset = queryset.filter(labor=filters["labor"])
+        if filters["start_date"]:
+            queryset = queryset.filter(date__gte=filters["start_date"])
+        if filters["end_date"]:
+            queryset = queryset.filter(date__lte=filters["end_date"])
+
+        date_order = "date" if filters["sort"] == "oldest" else "-date"
+        return queryset.annotate(
+            daily_wage=ExpressionWrapper(
+                F("total_hours") * F("labor__profile__hourly_rate"),
+                output_field=DecimalField(max_digits=12, decimal_places=2),
+            )
+        ).order_by(date_order, "-created_at")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = getattr(self, "filter_form", self.get_form())
+        pagination_query = self.request.GET.copy()
+        pagination_query.pop("page", None)
+        context["pagination_query"] = pagination_query.urlencode()
+        return context
 
 
 def approve_entry(request, pk):
