@@ -9,7 +9,7 @@
             <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
             {% endif %}
             <div class="card-body">
-                <h5 class="card-title">{{ post.title }}</h5>
+                <h2 class="h5 card-title">{{ post.title }}</h2>
                 <p class="card-text">{{ post.excerpt }}</p>
                 <a href="{% url 'blog:detail' post.slug %}" class="btn btn-outline-primary">Read more</a>
             </div>

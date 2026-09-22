@@ -2,9 +2,9 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <h1 class="mb-4">{% if object %}Edit{% else %}New{% endif %} Timesheet Entry</h1>
-{% if object.rejection_reason %} 
+{% if object.rejection_reason %}
 <div class="alert alert-danger" role="alert">
-    <h6 class="alert-heading">Rejection Reason</h6>
+    <h2 class="h6 alert-heading">Rejection Reason</h2>
     <div>
         {{ object.rejection_reason|striptags|linebreaks }}
     </div>
