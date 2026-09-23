@@ -11,7 +11,7 @@
 <div class="mb-4">{{ project.description|safe }}</div>
 
 {% if project.images.all %}
-<h3>Gallery</h3>
+<h2 class="h3" >Gallery</h2>
 <div class="row g-3">
     {% for image in project.images.all %}
     <div class="col-md-4">
