@@ -23,6 +23,7 @@ from .forms import (
     TimesheetFilterForm,
 )
 
+
 class ManagerRequiredMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if (
@@ -31,6 +32,7 @@ class ManagerRequiredMixin(LoginRequiredMixin):
         ):
             return HttpResponseForbidden("Manager access only.")
         return super().dispatch(request, *args, **kwargs)
+
 
 class ManagerDashboardView(ManagerRequiredMixin, TemplateView):
     template_name = "dashboard/home.html"
@@ -142,7 +144,7 @@ def reject_entry(request, pk):
     return render(request, "dashboard/reject_entry.html", {"entry": entry})
 
 
-#contact
+# contact
 class ContactMessageListView(ManagerRequiredMixin, ListView):
     model = ContactMessage
     template_name = "dashboard/contact_messages.html"
@@ -157,7 +159,8 @@ def mark_message_read(request, pk):
     message.save(update_fields=["is_read"])
     return redirect("dashboard:contact_messages")
 
-#labor account managment
+
+# labor account managment
 class LaborListView(ManagerRequiredMixin, ListView):
     model = Profile
     template_name = "dashboard/labor_list.html"
@@ -210,6 +213,7 @@ def reset_labor_password(request, pk):
         "dashboard/reset_password.html",
         {"form": form, "profile": profile},
     )
+
 
 # payroll
 class PayrollReportView(ManagerRequiredMixin, FormView):
