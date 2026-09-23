@@ -21,7 +21,9 @@ def force_password_change(request):
     else:
         form = ForcePasswordChangeForm(user=request.user)
 
-    return render(request, "accounts/force_password_change.html", {"form": form})
+    return render(
+        request, "accounts/force_password_change.html", {"form": form}
+    )
 
 
 @login_required
@@ -36,4 +38,8 @@ def profile_update(request):
     else:
         form = ProfileUpdateForm(instance=profile)
 
-    return render(request, "accounts/profile.html", {"form": form, "profile": profile})
+    return render(
+        request,
+        "accounts/profile.html",
+        {"form": form, "profile": profile},
+    )

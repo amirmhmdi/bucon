@@ -14,8 +14,12 @@ class Project(models.Model):
     client_name = models.CharField(max_length=100, blank=True)
     completed_on = models.DateField(null=True, blank=True)
     is_featured = models.BooleanField(default=False)
-    status = models.CharField(max_length=10, choices=Status.choices, default=Status.DRAFT)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(
+        max_length=10, choices=Status.choices, default=Status.DRAFT
+    )
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -26,7 +30,9 @@ class Project(models.Model):
 
 
 class ProjectImage(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="images")
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="images"
+    )
     image = models.ImageField(upload_to="projects/gallery/")
     caption = models.CharField(max_length=150, blank=True)
     order = models.PositiveIntegerField(default=0)

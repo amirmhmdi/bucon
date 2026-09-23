@@ -12,7 +12,13 @@ class ProjectImageInline(admin.TabularInline):
 @admin.register(Project)
 class ProjectAdmin(SummernoteModelAdmin):
     summernote_fields = ("description",)
-    list_display = ["title", "status", "is_featured", "completed_on", "created_by"]
+    list_display = [
+        "title",
+        "status",
+        "is_featured",
+        "completed_on",
+        "created_by",
+    ]
     list_filter = ["status", "is_featured"]
     search_fields = ["title", "client_name"]
     prepopulated_fields = {"slug": ("title",)}

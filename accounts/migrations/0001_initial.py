@@ -17,17 +17,49 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Profile',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('role', models.CharField(choices=[('labor', 'Labor'), ('manager', 'Manager')], default='labor', max_length=10)),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'role',
+                    models.CharField(
+                        choices=[('labor', 'Labor'), ('manager', 'Manager')],
+                        default='labor',
+                        max_length=10,
+                    ),
+                ),
                 ('phone', models.CharField(blank=True, max_length=20)),
-                ('photo', models.ImageField(blank=True, null=True, upload_to='profiles/')),
-                ('hourly_rate', models.DecimalField(blank=True, decimal_places=2, max_digits=8, null=True)),
+                (
+                    'photo',
+                    models.ImageField(
+                        blank=True, null=True, upload_to='profiles/'
+                    ),
+                ),
+                (
+                    'hourly_rate',
+                    models.DecimalField(
+                        blank=True, decimal_places=2, max_digits=8, null=True
+                    ),
+                ),
                 ('hire_date', models.DateField(blank=True, null=True)),
                 ('is_active_employee', models.BooleanField(default=True)),
                 ('must_change_password', models.BooleanField(default=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='profile', to=settings.AUTH_USER_MODEL)),
+                (
+                    'user',
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='profile',
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

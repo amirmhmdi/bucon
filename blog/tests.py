@@ -5,10 +5,14 @@ from django.urls import reverse
 from .models import Post
 
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+@override_settings(
+	STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
+)
 class BlogViewTests(TestCase):
 	def setUp(self):
-		self.author = User.objects.create_user(username="author", password="password")
+		self.author = User.objects.create_user(
+			username="author", password="password"
+		)
 		self.published = Post.objects.create(
 			title="Published guide",
 			slug="published-guide",
@@ -36,7 +40,9 @@ class BlogViewTests(TestCase):
 		self.assertEqual(response.status_code, 404)
 
 	def test_published_detail_is_available(self):
-		response = self.client.get(reverse("blog:detail", args=[self.published.slug]))
+		response = self.client.get(
+			reverse("blog:detail", args=[self.published.slug])
+		)
 
 		self.assertEqual(response.status_code, 200)
 		self.assertEqual(response.context["post"], self.published)

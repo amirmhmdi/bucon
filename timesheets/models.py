@@ -10,17 +10,27 @@ class TimesheetEntry(models.Model):
         APPROVED = "approved", "Approved"
         REJECTED = "rejected", "Rejected"
 
-    labor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="timesheet_entries")
+    labor = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="timesheet_entries"
+    )
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
     break_minutes = models.PositiveIntegerField(default=0)
-    total_hours = models.DecimalField(max_digits=5, decimal_places=2, editable=False, default=0)
+    total_hours = models.DecimalField(
+        max_digits=5, decimal_places=2, editable=False, default=0
+    )
     description = models.TextField(help_text="What did you work on today?")
 
-    status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
+    status = models.CharField(
+        max_length=10, choices=Status.choices, default=Status.PENDING
+    )
     approved_by = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="approved_entries"
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="approved_entries",
     )
     approved_at = models.DateTimeField(null=True, blank=True)
     rejection_reason = models.TextField(blank=True)

@@ -5,10 +5,14 @@ from django.urls import reverse
 from .models import Project, ProjectImage
 
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+@override_settings(
+	STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
+)
 class PortfolioViewTests(TestCase):
 	def setUp(self):
-		self.creator = User.objects.create_user(username="creator", password="password")
+		self.creator = User.objects.create_user(
+			username="creator", password="password"
+		)
 		self.published = Project.objects.create(
 			title="Fitted kitchen",
 			slug="fitted-kitchen",
@@ -33,7 +37,9 @@ class PortfolioViewTests(TestCase):
 		self.assertEqual(list(response.context["projects"]), [self.published])
 
 	def test_detail_hides_drafts(self):
-		response = self.client.get(reverse("portfolio:detail", args=["private-project"]))
+		response = self.client.get(
+			reverse("portfolio:detail", args=["private-project"])
+		)
 
 		self.assertEqual(response.status_code, 404)
 
@@ -44,7 +50,9 @@ class PortfolioViewTests(TestCase):
 			caption="Oak worktop",
 		)
 
-		response = self.client.get(reverse("portfolio:detail", args=[self.published.slug]))
+		response = self.client.get(
+			reverse("portfolio:detail", args=[self.published.slug])
+		)
 
 		self.assertEqual(response.status_code, 200)
 		self.assertEqual(list(response.context["project"].images.all()), [image])

@@ -14,7 +14,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Banner',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('title', models.CharField(blank=True, max_length=150)),
                 ('subtitle', models.CharField(blank=True, max_length=255)),
                 ('image', models.ImageField(upload_to='banners/')),
@@ -29,7 +37,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ContactMessage',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=100)),
                 ('email', models.EmailField(max_length=254)),
                 ('phone', models.CharField(blank=True, max_length=20)),
@@ -44,17 +60,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SiteSettings',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('company_name', models.CharField(default='BUCON', max_length=100)),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'company_name',
+                    models.CharField(default='BUCON', max_length=100),
+                ),
                 ('tagline', models.CharField(blank=True, max_length=200)),
-                ('logo', models.ImageField(blank=True, null=True, upload_to='site/')),
+                (
+                    'logo',
+                    models.ImageField(
+                        blank=True, null=True, upload_to='site/'
+                    ),
+                ),
                 ('about_text', models.TextField(blank=True)),
                 ('phone', models.CharField(blank=True, max_length=20)),
                 ('email', models.EmailField(blank=True, max_length=254)),
                 ('address', models.CharField(blank=True, max_length=255)),
                 ('facebook_url', models.URLField(blank=True)),
                 ('instagram_url', models.URLField(blank=True)),
-                ('working_hours', models.CharField(blank=True, max_length=100)),
+                (
+                    'working_hours',
+                    models.CharField(blank=True, max_length=100),
+                ),
             ],
             options={
                 'verbose_name': 'Site settings',

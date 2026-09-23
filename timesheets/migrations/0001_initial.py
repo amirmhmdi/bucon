@@ -17,20 +17,68 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TimesheetEntry',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('date', models.DateField()),
                 ('start_time', models.TimeField()),
                 ('end_time', models.TimeField()),
                 ('break_minutes', models.PositiveIntegerField(default=0)),
-                ('total_hours', models.DecimalField(decimal_places=2, default=0, editable=False, max_digits=5)),
-                ('description', models.TextField(help_text='What did you work on today?')),
-                ('status', models.CharField(choices=[('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected')], default='pending', max_length=10)),
+                (
+                    'total_hours',
+                    models.DecimalField(
+                        decimal_places=2,
+                        default=0,
+                        editable=False,
+                        max_digits=5,
+                    ),
+                ),
+                (
+                    'description',
+                    models.TextField(
+                        help_text='What did you work on today?'
+                    ),
+                ),
+                (
+                    'status',
+                    models.CharField(
+                        choices=[
+                            ('pending', 'Pending'),
+                            ('approved', 'Approved'),
+                            ('rejected', 'Rejected'),
+                        ],
+                        default='pending',
+                        max_length=10,
+                    ),
+                ),
                 ('approved_at', models.DateTimeField(blank=True, null=True)),
                 ('rejection_reason', models.TextField(blank=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('approved_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='approved_entries', to=settings.AUTH_USER_MODEL)),
-                ('labor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='timesheet_entries', to=settings.AUTH_USER_MODEL)),
+                (
+                    'approved_by',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name='approved_entries',
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    'labor',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='timesheet_entries',
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
                 'ordering': ['-date', '-start_time'],

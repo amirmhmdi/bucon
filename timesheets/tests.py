@@ -12,7 +12,9 @@ from .forms import TimesheetEntryForm
 
 class TimesheetEntryDeleteTests(TestCase):
 	def setUp(self):
-		self.user = User.objects.create_user(username="labor", password="test-password")
+		self.user = User.objects.create_user(
+			username="labor", password="test-password"
+		)
 		self.user.profile.role = Profile.Role.LABOR
 		self.user.profile.must_change_password = False
 		self.user.profile.save()
@@ -94,14 +96,18 @@ class TimesheetModelAndFormTests(TestCase):
 		self.assertFalse(form.is_valid())
 		self.assertIn("End time must be different", str(form.errors))
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+@override_settings(
+	STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
+)
 class TimesheetAccessTests(TestCase):
 	def setUp(self):
 		self.labor = User.objects.create_user(username="worker", password="password")
 		self.labor.profile.role = Profile.Role.LABOR
 		self.labor.profile.must_change_password = False
 		self.labor.profile.save()
-		self.other_labor = User.objects.create_user(username="other", password="password")
+		self.other_labor = User.objects.create_user(
+			username="other", password="password"
+		)
 		self.other_labor.profile.role = Profile.Role.LABOR
 		self.other_labor.profile.must_change_password = False
 		self.other_labor.profile.save()
@@ -124,7 +130,9 @@ class TimesheetAccessTests(TestCase):
 	def test_labor_cannot_edit_another_users_entry(self):
 		self.client.force_login(self.labor)
 
-		response = self.client.get(reverse("timesheets:update", args=[self.entry.pk]))
+		response = self.client.get(
+			reverse("timesheets:update", args=[self.entry.pk])
+		)
 
 		self.assertEqual(response.status_code, 404)
 

@@ -25,7 +25,10 @@ from .forms import (
 
 class ManagerRequiredMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and not request.user.profile.is_manager:
+        if (
+            request.user.is_authenticated
+            and not request.user.profile.is_manager
+        ):
             return HttpResponseForbidden("Manager access only.")
         return super().dispatch(request, *args, **kwargs)
 
@@ -35,12 +38,16 @@ class ManagerDashboardView(ManagerRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
-            unread_messages=ContactMessage.objects.filter(is_read=False).count(),
+            unread_messages=ContactMessage.objects.filter(
+                is_read=False
+            ).count(),
             pending_timesheets=TimesheetEntry.objects.filter(
                 status=TimesheetEntry.Status.PENDING
             ).count(),
             all_timesheets_count=TimesheetEntry.objects.count(),
-            labor_count=Profile.objects.filter(role=Profile.Role.LABOR).count(),
+            labor_count=Profile.objects.filter(
+                role=Profile.Role.LABOR
+            ).count(),
         )
         return context
 
@@ -51,7 +58,9 @@ class PendingTimesheetListView(ManagerRequiredMixin, ListView):
     context_object_name = "entries"
 
     def get_queryset(self):
-        return TimesheetEntry.objects.filter(status=TimesheetEntry.Status.PENDING)
+        return TimesheetEntry.objects.filter(
+            status=TimesheetEntry.Status.PENDING
+        )
 
 
 class AllTimesheetListView(ManagerRequiredMixin, ListView):
@@ -65,7 +74,9 @@ class AllTimesheetListView(ManagerRequiredMixin, ListView):
 
     def get_queryset(self):
         self.filter_form = self.get_form()
-        queryset = TimesheetEntry.objects.select_related("labor", "labor__profile")
+        queryset = TimesheetEntry.objects.select_related(
+            "labor", "labor__profile"
+        )
 
         if not self.filter_form.is_valid():
             return queryset.annotate(
@@ -108,7 +119,9 @@ def approve_entry(request, pk):
     entry.approved_by = request.user
     entry.approved_at = timezone.now()
     entry.save()
-    messages.success(request, f"Approved {entry.labor}'s entry for {entry.date}.")
+    messages.success(
+        request, f"Approved {entry.labor}'s entry for {entry.date}."
+    )
     return redirect("dashboard:pending_timesheets")
 
 
@@ -122,7 +135,9 @@ def reject_entry(request, pk):
         entry.approved_by = request.user
         entry.approved_at = timezone.now()
         entry.save()
-        messages.success(request, f"Rejected {entry.labor}'s entry for {entry.date}.")
+        messages.success(
+            request, f"Rejected {entry.labor}'s entry for {entry.date}."
+        )
         return redirect("dashboard:pending_timesheets")
     return render(request, "dashboard/reject_entry.html", {"entry": entry})
 
@@ -149,7 +164,9 @@ class LaborListView(ManagerRequiredMixin, ListView):
     context_object_name = "labors"
 
     def get_queryset(self):
-        return Profile.objects.filter(role=Profile.Role.LABOR).select_related("user")
+        return Profile.objects.filter(
+            role=Profile.Role.LABOR
+        ).select_related("user")
 
 
 class LaborCreateView(ManagerRequiredMixin, FormView):
@@ -188,7 +205,11 @@ def reset_labor_password(request, pk):
             return redirect("dashboard:labor_list")
     else:
         form = ResetPasswordForm()
-    return render(request, "dashboard/reset_password.html", {"form": form, "profile": profile})
+    return render(
+        request,
+        "dashboard/reset_password.html",
+        {"form": form, "profile": profile},
+    )
 
 # payroll
 class PayrollReportView(ManagerRequiredMixin, FormView):
@@ -196,8 +217,14 @@ class PayrollReportView(ManagerRequiredMixin, FormView):
     template_name = "dashboard/payroll_report.html"
 
     def form_valid(self, form):
-        rows = self._build_rows(form.cleaned_data["start_date"], form.cleaned_data["end_date"])
-        return render(self.request, self.template_name, {"form": form, "rows": rows})
+        rows = self._build_rows(
+            form.cleaned_data["start_date"], form.cleaned_data["end_date"]
+        )
+        return render(
+            self.request,
+            self.template_name,
+            {"form": form, "rows": rows},
+        )
 
     def _build_rows(self, start_date, end_date):
         entries = (
@@ -205,7 +232,12 @@ class PayrollReportView(ManagerRequiredMixin, FormView):
                 status=TimesheetEntry.Status.APPROVED,
                 date__range=(start_date, end_date),
             )
-            .values("labor__id", "labor__first_name", "labor__last_name", "labor__email")
+            .values(
+                "labor__id",
+                "labor__first_name",
+                "labor__last_name",
+                "labor__email",
+            )
             .annotate(total_hours=Sum("total_hours"))
         )
         rows = []
@@ -215,7 +247,10 @@ class PayrollReportView(ManagerRequiredMixin, FormView):
             total_hours = entry["total_hours"] or 0
             rows.append(
                 {
-                    "name": f"{entry['labor__first_name']} {entry['labor__last_name']}".strip()
+                    "name": (
+                        f"{entry['labor__first_name']} "
+                        f"{entry['labor__last_name']}"
+                    ).strip()
                     or entry["labor__email"],
                     "total_hours": total_hours,
                     "hourly_rate": hourly_rate,
@@ -237,8 +272,17 @@ def payroll_csv_export(request):
 
     if form.is_valid():
         view = PayrollReportView()
-        rows = view._build_rows(form.cleaned_data["start_date"], form.cleaned_data["end_date"])
+        rows = view._build_rows(
+            form.cleaned_data["start_date"], form.cleaned_data["end_date"]
+        )
         for row in rows:
-            writer.writerow([row["name"], row["total_hours"], row["hourly_rate"], row["total_pay"]])
+            writer.writerow(
+                [
+                    row["name"],
+                    row["total_hours"],
+                    row["hourly_rate"],
+                    row["total_pay"],
+                ]
+            )
 
     return response

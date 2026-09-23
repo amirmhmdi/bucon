@@ -19,7 +19,10 @@ class ForcePasswordChangeMiddleware:
             profile = getattr(user, "profile", None)
             if profile and profile.must_change_password:
                 current_url_name = resolve(request.path_info).view_name
-                if current_url_name not in settings.FORCE_PASSWORD_CHANGE_EXEMPT_URL_NAMES:
+                if (
+                    current_url_name
+                    not in settings.FORCE_PASSWORD_CHANGE_EXEMPT_URL_NAMES
+                ):
                     return redirect("accounts:force_password_change")
 
         return self.get_response(request)

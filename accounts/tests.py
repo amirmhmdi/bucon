@@ -28,10 +28,14 @@ class AccountFormTests(TestCase):
 		self.assertFalse(form.is_valid())
 
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+@override_settings(
+	STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
+)
 class AccountViewTests(TestCase):
 	def setUp(self):
-		self.user = User.objects.create_user(username="worker", password="old-password")
+		self.user = User.objects.create_user(
+			username="worker", password="old-password"
+		)
 		self.user.profile.must_change_password = True
 		self.user.profile.save()
 

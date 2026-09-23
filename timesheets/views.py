@@ -54,14 +54,19 @@ class TimesheetEntryUpdateView(LaborRequiredMixin, UpdateView):
         response = super().dispatch(request, *args, **kwargs)
         entry = getattr(self, "object", None)
         if entry and not entry.is_editable:
-            return HttpResponseForbidden("This entry has been approved and can no longer be edited.")
+            return HttpResponseForbidden(
+                "This entry has been approved and can no longer be edited."
+            )
         return response
 
     def post(self, request, *args, **kwargs):
         if request.POST.get("action") == "delete":
             entry = self.get_object()
             if not entry.is_editable:
-                return HttpResponseForbidden("This entry has been approved and can no longer be deleted.")
+                return HttpResponseForbidden(
+                    "This entry has been approved and can no longer be "
+                    "deleted."
+                )
             entry.delete()
             messages.success(request, "Timesheet entry deleted.")
             return redirect(self.success_url)

@@ -21,8 +21,12 @@ def home(request):
 
     context = {
         "banners": Banner.objects.filter(is_active=True),
-        "featured_projects": Project.objects.filter(status=Project.Status.PUBLISHED, is_featured=True)[:6],
-        "featured_posts": Post.objects.filter(status=Post.Status.PUBLISHED, is_featured=True)[:3],
+        "featured_projects": Project.objects.filter(
+            status=Project.Status.PUBLISHED, is_featured=True
+        )[:6],
+        "featured_posts": Post.objects.filter(
+            status=Post.Status.PUBLISHED, is_featured=True
+        )[:3],
         "contact_form": form,
     }
     return render(request, "core/home.html", context)

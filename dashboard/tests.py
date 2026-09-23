@@ -12,7 +12,9 @@ from timesheets.models import TimesheetEntry
 
 class AllTimesheetListViewTests(TestCase):
 	def setUp(self):
-		self.manager = User.objects.create_user(username="manager", password="test-password")
+		self.manager = User.objects.create_user(
+			username="manager", password="test-password"
+		)
 		self.manager.profile.role = Profile.Role.MANAGER
 		self.manager.profile.must_change_password = False
 		self.manager.profile.save()
@@ -40,15 +42,23 @@ class AllTimesheetListViewTests(TestCase):
 			description=description,
 		)
 
-	@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
-	def test_manager_can_filter_timesheets_and_newest_same_day_entry_is_first(self):
+	@override_settings(
+		STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
+	)
+	def test_manager_can_filter_timesheets_and_newest_same_day_entry_is_first(
+		self,
+	):
 		older = self.create_entry("Older work", date(2026, 9, 16), start_hour=9)
 		newer = self.create_entry("Newer work", date(2026, 9, 16), start_hour=10)
 		self.create_entry("Different day", date(2026, 9, 15))
 
 		response = self.client.get(
 			reverse("dashboard:all_timesheets"),
-			{"labor": self.labor.pk, "start_date": "2026-09-16", "end_date": "2026-09-16"},
+			{
+				"labor": self.labor.pk,
+				"start_date": "2026-09-16",
+				"end_date": "2026-09-16",
+			},
 		)
 
 		entries = list(response.context["entries"])
@@ -64,10 +74,14 @@ class AllTimesheetListViewTests(TestCase):
 		self.assertEqual(response.status_code, 403)
 
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+@override_settings(
+	STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
+)
 class ManagerWorkflowTests(TestCase):
 	def setUp(self):
-		self.manager = User.objects.create_user(username="manager", password="password")
+		self.manager = User.objects.create_user(
+			username="manager", password="password"
+		)
 		self.manager.profile.role = Profile.Role.MANAGER
 		self.manager.profile.must_change_password = False
 		self.manager.profile.save()
@@ -103,7 +117,9 @@ class ManagerWorkflowTests(TestCase):
 		self.assertEqual(response.context["entries"].count(), 0)
 
 	def test_manager_can_approve_entry(self):
-		response = self.client.post(reverse("dashboard:approve_entry", args=[self.entry.pk]))
+		response = self.client.post(
+			reverse("dashboard:approve_entry", args=[self.entry.pk])
+		)
 
 		self.entry.refresh_from_db()
 		self.assertRedirects(response, reverse("dashboard:pending_timesheets"))
@@ -125,7 +141,9 @@ class ManagerWorkflowTests(TestCase):
 	def test_labor_cannot_approve_entry(self):
 		self.client.force_login(self.labor)
 
-		response = self.client.post(reverse("dashboard:approve_entry", args=[self.entry.pk]))
+		response = self.client.post(
+			reverse("dashboard:approve_entry", args=[self.entry.pk])
+		)
 
 		self.assertEqual(response.status_code, 403)
 		self.entry.refresh_from_db()

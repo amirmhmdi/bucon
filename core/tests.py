@@ -18,8 +18,12 @@ class CoreModelTests(TestCase):
 		self.assertEqual(SiteSettings.load().company_name, "Second")
 
 	def test_banner_string_uses_title_or_primary_key(self):
-		banner = Banner.objects.create(title="Crafted kitchen", image="banners/kitchen.jpg")
-		untitled = Banner.objects.create(title="", image="banners/untitled.jpg")
+		banner = Banner.objects.create(
+			title="Crafted kitchen", image="banners/kitchen.jpg"
+		)
+		untitled = Banner.objects.create(
+			title="", image="banners/untitled.jpg"
+		)
 
 		self.assertEqual(str(banner), "Crafted kitchen")
 		self.assertEqual(str(untitled), f"Banner #{untitled.pk}")
@@ -60,15 +64,24 @@ class ContactFormTests(TestCase):
 		self.assertIn("website", form.errors)
 
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+@override_settings(
+	STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
+)
 class CoreViewTests(TestCase):
 	def test_home_shows_only_active_banners_and_featured_published_content(self):
-		Banner.objects.create(title="Visible", image="banners/visible.jpg", is_active=True)
-		Banner.objects.create(title="Hidden", image="banners/hidden.jpg", is_active=False)
+		Banner.objects.create(
+			title="Visible", image="banners/visible.jpg", is_active=True
+		)
+		Banner.objects.create(
+			title="Hidden", image="banners/hidden.jpg", is_active=False
+		)
 
 		response = self.client.get(reverse("core:home"))
 
 		self.assertEqual(response.status_code, 200)
-		self.assertEqual(list(response.context["banners"].values_list("title", flat=True)), ["Visible"])
+		self.assertEqual(
+			list(response.context["banners"].values_list("title", flat=True)),
+			["Visible"],
+		)
 
 # Create your tests here.
