@@ -11,10 +11,14 @@
         </div>
         <div>
             {% if site_settings.facebook_url %}
-            <a class="text-light me-3" href="{{ site_settings.facebook_url }}">Facebook</a>
+            <a class="text-light me-3" href="{{ site_settings.facebook_url }}" target="_blank" rel="noopener noreferrer" aria-label="Visit {{ site_settings.company_name }} on Facebook">
+                Facebook
+            </a>
             {% endif %}
             {% if site_settings.instagram_url %}
-            <a class="text-light" href="{{ site_settings.instagram_url }}">Instagram</a>
+            <a class="text-light" href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Visit {{ site_settings.company_name }} on Instagram">
+                Instagram
+            </a>
             {% endif %}
         </div>
     </div>
