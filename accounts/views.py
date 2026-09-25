@@ -1,9 +1,15 @@
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 
-from .forms import ForcePasswordChangeForm, ProfileUpdateForm
+from .forms import (
+    ForcePasswordChangeForm,
+    LaborRegistrationForm,
+    ProfileUpdateForm,
+)
+from .models import Profile
 
 
 @login_required
@@ -43,3 +49,33 @@ def profile_update(request):
         "accounts/profile.html",
         {"form": form, "profile": profile},
     )
+
+
+def labor_register(request):
+    if request.method == "POST":
+        form = LaborRegistrationForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            user = User.objects.create_user(
+                username=data["email"],
+                email=data["email"],
+                first_name=data["first_name"],
+                last_name=data["last_name"],
+                password=data["password"],
+            )
+            profile = user.profile
+            profile.phone = data["phone"]
+            profile.role = Profile.Role.LABOR
+            profile.must_change_password = False
+            profile.save()
+            login(
+                request,
+                user,
+                backend="django.contrib.auth.backends.ModelBackend",
+            )
+            messages.success(request, "Your labor account has been created.")
+            return redirect("timesheets:list")
+    else:
+        form = LaborRegistrationForm()
+
+    return render(request, "accounts/register.html", {"form": form})

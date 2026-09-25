@@ -2,7 +2,11 @@ from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .forms import ForcePasswordChangeForm, ProfileUpdateForm
+from .forms import (
+    ForcePasswordChangeForm,
+    LaborRegistrationForm,
+    ProfileUpdateForm,
+)
 from .models import Profile
 
 
@@ -63,3 +67,68 @@ class AccountViewTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertIn("/accounts/login/", response.url)
+
+
+@override_settings(
+    STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage"
+)
+class LaborRegistrationTests(TestCase):
+    def valid_data(self, **overrides):
+        data = {
+            "first_name": "New",
+            "last_name": "Worker",
+            "email": "new.worker@example.com",
+            "phone": "0123456789",
+            "password": "Strong-password-123!",
+            "repeat_password": "Strong-password-123!",
+        }
+        data.update(overrides)
+        return data
+
+    def test_registration_requires_all_labor_fields(self):
+        form = LaborRegistrationForm()
+
+        self.assertTrue(all(field.required for field in form.fields.values()))
+
+    def test_labor_can_register_and_is_logged_in(self):
+        response = self.client.post(
+            reverse("accounts:register"), self.valid_data()
+        )
+
+        user = User.objects.get(email="new.worker@example.com")
+        self.assertRedirects(
+            response, reverse("timesheets:list"), fetch_redirect_response=False
+        )
+        self.assertEqual(user.profile.role, Profile.Role.LABOR)
+        self.assertEqual(user.profile.phone, "0123456789")
+        self.assertFalse(user.profile.must_change_password)
+        self.assertTrue(user.check_password("Strong-password-123!"))
+        self.assertEqual(int(response.wsgi_request.user.pk), user.pk)
+
+    def test_registration_rejects_duplicate_email(self):
+        User.objects.create_user(
+            username="existing@example.com",
+            email="existing@example.com",
+            password="password",
+        )
+
+        response = self.client.post(
+            reverse("accounts:register"),
+            self.valid_data(email="EXISTING@example.com"),
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "already exists")
+        self.assertEqual(
+            User.objects.filter(email__iexact="existing@example.com").count(),
+            1,
+        )
+
+    def test_registration_rejects_mismatched_passwords(self):
+        response = self.client.post(
+            reverse("accounts:register"),
+            self.valid_data(repeat_password="Different-password-123!"),
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "passwords do not match")

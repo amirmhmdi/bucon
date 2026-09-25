@@ -10,9 +10,13 @@
         {% csrf_token %}
         {{ form|crispy }}
         {% if redirect_field_value %}
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
         {% endif %}
         <button class="btn btn-primary w-100 mt-2" type="submit">Log in</button>
     </form>
+    <p class="text-center text-muted mt-4 mb-0">
+        Need a labor account?
+        <a href="{% url 'accounts:register' %}">Register here</a>
+    </p>
 </section>
 {% endblock %}
