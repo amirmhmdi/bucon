@@ -3,3 +3,5 @@ __pycache__
 
 env.py
 .env
+
+.DS_Store
