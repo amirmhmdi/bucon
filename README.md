@@ -31,6 +31,12 @@ _Responsive multi-device mockup showing the BUCON site across desktop, tablet, a
 - [Future Features](#future-features)
 - [Technologies Used](#technologies-used)
 - [Deployment](#deployment)
+  - [Prerequisites](#prerequisites)
+  - [Fork and Clone](#fork-and-clone)
+  - [Environment Variables](#environment-variables)
+  - [Run Locally](#run-locally)
+  - [Development Workflow](#development-workflow)
+  - [Deploy to Heroku](#deploy-to-heroku)
 - [Testing](#testing)
 - [Credits](#credits)
 
@@ -143,7 +149,7 @@ Key requirements:
 
 ##### 9. Manager-led labor account creation
 
-This story gives managers a controlled way to create staff accounts for labor roles. Each new account is created with a temporary starting password and the correct user role.
+This story gives managers a controlled way to create staff accounts for labor roles, while also allowing labor applicants to register themselves. Manager-created accounts use a temporary starting password, while self-registered accounts use the applicant's chosen password.
 
 Key requirements:
 
@@ -151,6 +157,8 @@ Key requirements:
 - New users are assigned the labor role.
 - Temporary-password enforcement is enabled for first-time login.
 - Accounts are created as active employees by default.
+- Labor applicants can use the registration page to create their own account.
+- Self-registration never exposes or accepts the hourly-rate field.
 
 ##### 10. Password reset for labor users
 
@@ -182,7 +190,8 @@ Key requirements:
 - Login uses email-based authentication.
 - Invalid credentials show clear feedback.
 - Successful login routes staff to the correct area.
-- Public self-registration is disabled.
+- Labor applicants can register with their name, email, phone, and password.
+- New self-registered accounts are assigned the labor role automatically.
 
 #### Epic 5: Labor Timesheet Area
 
@@ -311,6 +320,7 @@ _The dashboard and project-planning visuals reflect the operational workflow use
 
 #### Labor goals
 
+- Register for a labor account without needing a manager to create it first.
 - Sign in securely and submit timesheets on time.
 - Review prior entries and confirm approval status.
 - Complete a required password change and access the staff area safely.
@@ -334,6 +344,7 @@ _The dashboard and project-planning visuals reflect the operational workflow use
 
 - Public homepage with hero banner, portfolio highlights, company overview, and contact form.
 - Portfolio and blog list/detail views with published-only filtering.
+- Labor self-registration with themed form validation and immediate login.
 - Role-based access for labor staff and managers.
 - Temporary password workflow and mandatory password change.
 - Timesheet creation, updates, approvals, and payroll reporting.
@@ -342,7 +353,6 @@ _The dashboard and project-planning visuals reflect the operational workflow use
 
 #### Outside the initial scope
 
-- Public self-registration.
 - Automated email notifications for approvals or replies.
 - PDF payroll exports or printable payslips.
 - Multi-language support.
@@ -518,11 +528,15 @@ _The contact flow and manager message inbox._
 
 ### 6. Authentication and access controls
 
-The login flow uses Django Allauth with email-based sign-in and role-aware redirects. Public self-registration is disabled, and the app ensures that sensitive user actions remain protected behind the correct role checks.
+The login flow uses Django Allauth with email-based sign-in and role-aware redirects. The login page includes a themed registration link for labor applicants. The registration form requires a name, email, phone number, and password, assigns the labor role automatically, excludes hourly-rate editing, and signs the new user in immediately.
 
 ![Login page feature](documents/features/Login_page_feature.png)
 
 _The login page and Allauth integration._
+
+![Labor registration page](documents/features/register_page_feature.png)
+
+_The labor self-registration page with required account fields._
 
 ### 7. Manager-created labor accounts and password resets
 
@@ -600,6 +614,34 @@ _The responsive layout uses Bootstrap 5, a collapsible navbar, and media-query a
 
 The responsive behaviour is supported by the Bootstrap grid system and a mobile-focused CSS block that adjusts spacing, image aspect ratios, and layout density for tablet and phone displays.
 
+### Tablet role views
+
+![Tablet viewer view](documents/mobile%26tablet_view/tablet_view_viewer_user.gif)
+
+_Tablet experience for a public visitor._
+
+![Tablet labor view](documents/mobile%26tablet_view/tablet_view_labor_user.gif)
+
+_Tablet experience for a labor user._
+
+![Tablet manager view](documents/mobile%26tablet_view/tablet_view_manager_user.gif)
+
+_Tablet experience for a manager._
+
+### Mobile role views
+
+![Mobile viewer view](documents/mobile%26tablet_view/mobile_view_viewer_user.gif)
+
+_Mobile experience for a public visitor._
+
+![Mobile labor view](documents/mobile%26tablet_view/mobile_view_labor_user.gif)
+
+_Mobile experience for a labor user._
+
+![Mobile manager view](documents/mobile%26tablet_view/mobile_view_manager_user.gif)
+
+_Mobile experience for a manager._
+
 ## Future Features
 
 - Email notifications when a timesheet is approved or rejected.
@@ -666,18 +708,164 @@ The responsive behaviour is supported by the Bootstrap grid system and a mobile-
 
 ## Deployment
 
-The deployment setup reflects the project configuration in the Procfile, Django settings, and dependency list.
+The project can be developed locally with Django and PostgreSQL, then deployed to Heroku using the included `Procfile`, `requirements.txt`, WhiteNoise configuration, and Cloudinary media storage.
 
-1. Create a GitHub repository and push the project code.
-2. Create a Heroku app with a unique name and the required region.
-3. Create a PostgreSQL database and copy the connection URL into `DATABASE_URL`.
-4. Create a Cloudinary account and add the Cloudinary URL to `CLOUDINARY_URL`.
-5. Set the required environment variables for the app, including `SECRET_KEY`, `DEBUG`, and `ALLOWED_HOSTS` if needed.
-6. Ensure the project includes the `Procfile` and required dependencies from `requirements.txt`.
-7. Enable WhiteNoise for static assets in production.
-8. Connect the GitHub repository to Heroku and deploy the main branch.
-9. Run migrations on the deployed application and create a superuser.
-10. To run locally, create a virtual environment, install dependencies, set environment variables, apply migrations, and start the app with Django's development server.
+### Prerequisites
+
+Install or create accounts for the following before starting:
+
+- Python 3.12 or a compatible Python 3 version.
+- Git and a GitHub account.
+- PostgreSQL for local development, or a hosted PostgreSQL database.
+- A Cloudinary account if media uploads are required outside local development.
+- A Heroku account and Heroku CLI for Heroku deployment.
+
+### Fork and Clone
+
+To create your own copy on GitHub:
+
+1. Open the BUCON repository on GitHub and select **Fork**.
+2. Choose your GitHub account as the destination.
+3. Clone your fork locally, replacing the URL with your fork URL:
+
+```bash
+git clone https://github.com/<your-github-name>/<your-repository>.git
+cd <your-repository>
+```
+
+4. Add the original repository as an optional upstream remote:
+
+```bash
+git remote add upstream https://github.com/<original-owner>/<original-repository>.git
+git remote -v
+```
+
+5. Create a feature branch before making changes:
+
+```bash
+git checkout -b feature/your-change
+```
+
+### Environment Variables
+
+Copy the example file and fill in values for your environment:
+
+```bash
+cp .env.example .env
+```
+
+The `.env` file should contain values similar to the following. Do not commit `.env` or share real secrets publicly.
+
+```env
+SECRET_KEY=replace-with-a-long-random-secret
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1,localhost
+DATABASE_URL=postgres://database_user:database_password@localhost:5432/bucon
+CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name
+```
+
+For production, set `DEBUG=False`, use the live domain in `ALLOWED_HOSTS`, and configure the production database and Cloudinary credentials through the hosting provider's environment settings. Never use the example placeholder values in production.
+
+### Run Locally
+
+Create and activate a virtual environment, then install the pinned dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Create the PostgreSQL database named in `DATABASE_URL`, then apply migrations and create an admin account:
+
+```bash
+python manage.py migrate
+python manage.py createsuperuser
+```
+
+Start the development server:
+
+```bash
+python manage.py runserver
+```
+
+Open `http://127.0.0.1:8000/` in a browser. The Django admin is available at `http://127.0.0.1:8000/admin/`.
+
+If PostgreSQL is unavailable, use a local SQLite URL only if you update the Django database configuration for your development environment. The committed settings expect `DATABASE_URL` to be present.
+
+### Development Workflow
+
+Before opening a pull request or pushing a release, run the project checks:
+
+```bash
+python manage.py check
+python manage.py test
+python -m compileall -q accounts blog config core dashboard portfolio timesheets manage.py
+```
+
+The project also requires Python files to use spaces for indentation and keep every line below 79 characters. A simple line-length check is:
+
+```bash
+find . -path './.venv' -prune -o -name '*.py' -print0 \\
+  | xargs -0 awk 'length($0) > 79 {print FILENAME ":" FNR ":" length($0)}'
+```
+
+After testing, commit and push the branch to your fork:
+
+```bash
+git add .
+git commit -m "Describe the change"
+git push origin feature/your-change
+```
+
+### Deploy to Heroku
+
+1. Create a Heroku app and connect it to your GitHub repository, or log in with the Heroku CLI:
+
+```bash
+heroku login
+heroku create your-bucon-app
+```
+
+2. Add a Heroku Postgres database:
+
+```bash
+heroku addons:create heroku-postgresql:essential-0 --app your-bucon-app
+```
+
+3. Set production configuration values. The database add-on supplies `DATABASE_URL` automatically:
+
+```bash
+heroku config:set SECRET_KEY="replace-with-a-production-secret" --app your-bucon-app
+heroku config:set DEBUG=False --app your-bucon-app
+heroku config:set ALLOWED_HOSTS="your-bucon-app.herokuapp.com" --app your-bucon-app
+heroku config:set CLOUDINARY_URL="cloudinary://api_key:api_secret@cloud_name" --app your-bucon-app
+```
+
+4. Deploy the main branch or your tested release branch:
+
+```bash
+git push heroku main
+```
+
+If the app is connected through Heroku GitHub deployment, push to GitHub and deploy the selected branch from the Heroku dashboard instead.
+
+5. Apply migrations and create the first administrator:
+
+```bash
+heroku run python manage.py migrate --app your-bucon-app
+heroku run python manage.py createsuperuser --app your-bucon-app
+```
+
+6. Verify the deployment:
+
+```bash
+heroku logs --tail --app your-bucon-app
+heroku open --app your-bucon-app
+```
+
+After deployment, configure Site Settings, upload the logo and media, create or promote manager accounts, and review the production domain, `ALLOWED_HOSTS`, static files, database, and Cloudinary configuration. Keep credentials in Heroku config vars rather than in the repository.
 
 ## Testing
 
@@ -964,9 +1152,11 @@ _Desktop, tablet, and mobile view of the site._
 | Blog reading experience                | Open the blog list and read a published article                       | ✅   |
 | Contact form for enquiries             | Submit a valid enquiry and confirm it is stored                       | ✅   |
 | Manager-led labor account creation     | Create a staff account with a temporary password                      | ✅   |
+| Labor self-registration                | Register with required details and sign in immediately                | ✅   |
 | Password reset for labor users         | Reset the labor password and confirm forced change is re-enabled      | ✅   |
 | Forced password change on first login  | Log in with a temporary password and verify redirection               | ✅   |
 | Email-based login                      | Sign in using email and confirm role-based redirect                   | ✅   |
+| Labor registration                     | Use the login-page registration link and complete the signup form     | ✅   |
 | Daily timesheet submission             | Create a valid timesheet and confirm hour totals are calculated       | ✅   |
 | Editing pending or rejected timesheets | Update an in-review timesheet and verify restrictions                 | ✅   |
 | Timesheet history                      | Review the labor list and check statuses                              | ✅   |
@@ -1013,6 +1203,8 @@ Verified areas in the repository include:
 - `timesheets/tests.py` for hours calculation, access restrictions, and deletion rules.
 - `dashboard/tests.py` for approval, rejection, and payroll logic.
 - `core/tests.py` for singleton settings, banner ordering, and contact-form protections.
+
+![Resuls of tests in console](documents/tests_result.png)
 
 #### Bugs addressed
 
