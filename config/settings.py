@@ -134,7 +134,7 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "core:home"
 
 
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+TIME_ZONE = "Australia/Melbourne"
 USE_I18N = True
 USE_TZ = True
 
